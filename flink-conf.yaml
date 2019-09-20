@@ -1,0 +1,11 @@
+#metrics.reporter.jmx.factory.class: org.apache.flink.metrics.jmx.JMXReporterFactory
+
+metrics.reporter.jmx.class: org.apache.flink.metrics.jmx.JMXReporter
+metrics.reporter.jmx.port: 8789
+
+metrics.scope.tm:       abc123.taskmanager
+metrics.scope.jm:       abc123.jobmanager
+metrics.scope.jm.job:   abc123.jobmanager.jm.<job_id>.<job_name>
+metrics.scope.tm.job:   abc123.taskmanager.tm.<job_id>.<job_name>
+metrics.scope.task:     abc123.taskmanager.task.<task_id>.<task_name>
+metrics.scope.operator: abc123.taskmanager.operator.<operator_id>.<operator_name>
