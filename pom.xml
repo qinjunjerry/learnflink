@@ -37,6 +37,8 @@ under the License.
 		<!-- Copied from Flink -->
 		<slf4j.version>1.7.15</slf4j.version>
 		<log4j.version>1.2.17</log4j.version>
+		<junit.version>4.12</junit.version>
+		<mockito.version>2.21.0</mockito.version>
 
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
@@ -129,6 +131,21 @@ under the License.
 			<artifactId>flink-runtime-web_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<type>jar</type>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

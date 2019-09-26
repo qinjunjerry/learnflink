@@ -1,5 +1,7 @@
-package com.ververica.learnflink;
+package com.ververica.learnflink.function;
 
+import com.ververica.learnflink.entity.FraudAlert;
+import com.ververica.learnflink.entity.Transaction;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.common.typeinfo.Types;
@@ -7,30 +9,27 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
 
-import com.ververica.learnflink.entity.FraudAlert;
-import com.ververica.learnflink.entity.Transaction;
-
 public class FraudDetector extends KeyedProcessFunction<Long, Transaction, FraudAlert> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final double SMALL_AMOUNT = 1.00;
+    private static final double SMALL_AMOUNT = 1.00;
 
-    public static final double LARGE_AMOUNT = 500.00;
+    private static final double LARGE_AMOUNT = 500.00;
 
-    public static final long ONE_MINUTE = 60 * 1000;
+    private static final long ONE_MINUTE = 60 * 1000;
 
-    private transient ValueState<Boolean> foundSmallTranState;
+    private transient ValueState<Boolean> foundState;
 
     private transient ValueState<Long> timerState;
 
     @Override
-    public void open(Configuration parameters) throws Exception {
+    public void open(Configuration parameters) {
         ValueStateDescriptor<Boolean> foundSmallTranDescriptor = new ValueStateDescriptor<>(
                 "foundSmallTran",
                 Types.BOOLEAN);
 
-        foundSmallTranState = getRuntimeContext().getState(foundSmallTranDescriptor);
+        foundState = getRuntimeContext().getState(foundSmallTranDescriptor);
 
         ValueStateDescriptor<Long> timerDescriptor = new ValueStateDescriptor<>(
                 "timer",
@@ -46,7 +45,7 @@ public class FraudDetector extends KeyedProcessFunction<Long, Transaction, Fraud
             Collector<FraudAlert> collector) throws Exception {
 
         // Get the current state for the current key
-        Boolean lastTransactionWasSmall = foundSmallTranState.value();
+        Boolean lastTransactionWasSmall = foundState.value();
 
         if (lastTransactionWasSmall != null) {
             if (transaction.getAmount() > LARGE_AMOUNT) {
@@ -61,7 +60,7 @@ public class FraudDetector extends KeyedProcessFunction<Long, Transaction, Fraud
 
         if (transaction.getAmount() < SMALL_AMOUNT) {
             // set the flag to true
-            foundSmallTranState.update(true);
+            foundState.update(true);
 
             long timer = context.timerService().currentProcessingTime() + ONE_MINUTE;
             context.timerService().registerProcessingTimeTimer(timer);
@@ -71,9 +70,9 @@ public class FraudDetector extends KeyedProcessFunction<Long, Transaction, Fraud
     }
 
     @Override
-    public void onTimer(long timestamp, OnTimerContext ctx, Collector<FraudAlert> out) throws Exception {
+    public void onTimer(long timestamp, OnTimerContext ctx, Collector<FraudAlert> out) {
         timerState.clear();
-        foundSmallTranState.clear();
+        foundState.clear();
     }
 
     private void cleanUp(Context ctx) throws Exception {
@@ -84,6 +83,6 @@ public class FraudDetector extends KeyedProcessFunction<Long, Transaction, Fraud
             timerState.clear();
         }
 
-        foundSmallTranState.clear();
+        foundState.clear();
     }
 }

@@ -23,19 +23,22 @@ import java.util.Objects;
 /**
  * A simple transaction: accountId, timestamp, amount.
  */
-public final class Transaction {
+public class Transaction {
 
-	private long accountId;
+	long accountId;
 
-	private long timestamp;
+	long timestamp;
 
-	private double amount;
+	long transactionId;
+
+	double amount;
 
 	public Transaction() { }
 
-	public Transaction(long accountId, long timestamp, double amount) {
+	public Transaction(long accountId, long timestamp, long transactionId, double amount) {
 		this.accountId = accountId;
 		this.timestamp = timestamp;
+		this.transactionId = transactionId;
 		this.amount = amount;
 	}
 
@@ -55,6 +58,14 @@ public final class Transaction {
 		this.timestamp = timestamp;
 	}
 
+	public long getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(long transactionId) {
+		this.transactionId = transactionId;
+	}
+
 	public double getAmount() {
 		return amount;
 	}
@@ -65,28 +76,29 @@ public final class Transaction {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		} else if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
 		Transaction that = (Transaction) o;
-		return accountId == that.accountId &&
-			timestamp == that.timestamp &&
-			Double.compare(that.amount, amount) == 0;
+
+		if (accountId != that.accountId) return false;
+		if (timestamp != that.timestamp) return false;
+		if (transactionId != that.transactionId) return false;
+		return Double.compare(that.amount, amount) == 0;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(accountId, timestamp, amount);
+		return Objects.hash(accountId, timestamp, transactionId, amount);
 	}
 
 	@Override
 	public String toString() {
 		return "Transaction{" +
-			"accountId=" + accountId +
-			", timestamp=" + timestamp +
-			", amount=" + amount +
-			'}';
+				"accountId=" + accountId +
+				", timestamp=" + timestamp +
+				", transactionId=" + transactionId +
+				", amount=" + amount +
+				'}';
 	}
 }

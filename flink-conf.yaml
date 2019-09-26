@@ -1,11 +1,17 @@
+# The port 8081 is used by Mcafee agent on MacOS:
+#      $ netstat -anv | grep 8081 | grep LISTEN
+#      tcp46      0      0  *.8081                 *.*                    LISTEN      131072 131072     58      0 0x0100 0x00000006
+#      $ ps -fp 58
+#      UID   PID  PPID   C STIME   TTY           TIME CMD
+#      502    58     1   0  2:09PM ??         0:00.18 /Library/McAfee/agent/bin/macmnsvc self_start
+#  or check with lsof
+#      $ sudo lsof -i :8081
+#      COMMAND  PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+#      macmnsvc  58  mfe   20u  IPv6 0xd4f720d700d1edcd      0t0  TCP *:sunproxyadmin (LISTEN)
+rest.port: 8091
+
+
 #metrics.reporter.jmx.factory.class: org.apache.flink.metrics.jmx.JMXReporterFactory
 
 metrics.reporter.jmx.class: org.apache.flink.metrics.jmx.JMXReporter
-metrics.reporter.jmx.port: 8789
-
-metrics.scope.tm:       abc123.taskmanager
-metrics.scope.jm:       abc123.jobmanager
-metrics.scope.jm.job:   abc123.jobmanager.jm.<job_id>.<job_name>
-metrics.scope.tm.job:   abc123.taskmanager.tm.<job_id>.<job_name>
-metrics.scope.task:     abc123.taskmanager.task.<task_id>.<task_name>
-metrics.scope.operator: abc123.taskmanager.operator.<operator_id>.<operator_name>
+metrics.reporter.jmx.port: 9250
