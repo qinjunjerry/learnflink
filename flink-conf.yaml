@@ -15,3 +15,9 @@ rest.port: 8091
 
 metrics.reporter.jmx.class: org.apache.flink.metrics.jmx.JMXReporter
 metrics.reporter.jmx.port: 9250
+
+
+akka.watch.heartbeat.interval: 10000s
+akka.watch.heartbeat.pause: 60000s
+resourcemanager.job.timeout: 100 minutes
+resourcemanager.taskmanager-timeout: 30000000s

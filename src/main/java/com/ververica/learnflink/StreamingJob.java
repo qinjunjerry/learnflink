@@ -22,6 +22,7 @@ import com.ververica.learnflink.entity.EnrichedTransaction;
 import com.ververica.learnflink.entity.FraudAlert;
 import com.ververica.learnflink.entity.Transaction;
 import com.ververica.learnflink.entity.TransactionDetails;
+import com.ververica.learnflink.eventtime.TransactionDetailsTimeAssigner;
 import com.ververica.learnflink.eventtime.TransactionTimeAssigner;
 import com.ververica.learnflink.function.*;
 import com.ververica.learnflink.sink.EnrichedTransactionSink;
@@ -30,14 +31,17 @@ import com.ververica.learnflink.sink.TransactionSink;
 import com.ververica.learnflink.sink.Tuple6Sink;
 import com.ververica.learnflink.source.TransactionDetailsSource;
 import com.ververica.learnflink.source.TransactionSource;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.configuration.GlobalConfiguration;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.util.OutputTag;
 
 /**
  * Skeleton for a Flink Streaming Job.
@@ -52,6 +56,8 @@ import org.apache.flink.streaming.api.windowing.time.Time;
  * method, change the respective entry in the POM.xml file (simply search for 'mainClass').
  */
 public class StreamingJob {
+	public static final OutputTag<Transaction> transactionSideOutput = new OutputTag<Transaction>("transaction-side-output") {};
+	public static final OutputTag<TransactionDetails> detailsSideOutput = new OutputTag<TransactionDetails>("detail-side-output") {};
 
 	public static void main(String[] args) throws Exception {
 		// set up the streaming execution environment
@@ -80,7 +86,11 @@ public class StreamingJob {
 		//statefulStreamStats(env);
 		//fraudDetection(env);
 		//connectStream(env);
-		hourlyMaxTransaction(env);
+		//hourlyMaxTransaction(env);
+		//hourlyReduce(env);
+		//hourlyAggregation(env);
+		connectStreamWithTimer(env);
+
 	}
 
 	private static void filterStream(StreamExecutionEnvironment env) throws Exception {
@@ -261,18 +271,62 @@ public class StreamingJob {
 				.name("transactions")
 				.filter(new AccountFilterFunction());
 
-		transactions
+		DataStream<Tuple3<Long,Long,Double>> hourlyMaxPerAccount = transactions
 				.assignTimestampsAndWatermarks(new TransactionTimeAssigner())
 				.name("add timestamp and watermark")
 				.keyBy(Transaction::getAccountId)
 				.window(TumblingEventTimeWindows.of(Time.hours(1)))
 				.aggregate(new HourlyAggregateFunction(), new HourlyAggregateProcessWindowFunction())
-				.name("hourly max transaction with aggregation")
-				.print();
+				.name("hourly max transaction with aggregation");
+
+
+		//hourlyMaxPerAccount.print();
+
+		hourlyMaxPerAccount.timeWindowAll(Time.hours(1))
+			.maxBy(2)
+			.print();
 
 		env.execute("Flink Job: hourly aggregation");
 
 	}
+
+	private static void connectStreamWithTimer(StreamExecutionEnvironment env) throws Exception {
+
+		DataStream<Transaction> transactions = env
+				.addSource(new TransactionSource())
+				.name("transactions")
+				.assignTimestampsAndWatermarks(new TransactionTimeAssigner());
+
+		KeyedStream<Transaction, Long> keyedTransactions = transactions
+				.filter(new AccountFilterFunction())
+				// To simulate event loss
+				.filter((Transaction t) -> (t.getTransactionId() % 10 != 0))
+				.name("filter out test account")
+				.keyBy(Transaction::getTransactionId);
+
+
+		DataStream<TransactionDetails> transactionDetails = env
+				.addSource(new TransactionDetailsSource())
+				.name("transaction details")
+				.assignTimestampsAndWatermarks(new TransactionDetailsTimeAssigner())
+				// To simulate event loss
+				.filter( (TransactionDetails td) -> (td.getTransactionId() % 11 != 0));
+
+		KeyedStream<TransactionDetails, Long> keyedTransactionDetails = transactionDetails
+				.keyBy(TransactionDetails::getTransactionId);
+
+
+
+		SingleOutputStreamOperator processed = keyedTransactions
+				.connect(keyedTransactionDetails)
+				.process(new EnrichedTransactionWithTimeoutFunction());
+
+		processed.getSideOutput(transactionSideOutput).print();
+		processed.getSideOutput(detailsSideOutput).print();
+
+		env.execute("Flink Job: connect stream");
+	}
+
 
 }
 
