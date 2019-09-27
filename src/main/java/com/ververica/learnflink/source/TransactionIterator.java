@@ -35,7 +35,7 @@ final class TransactionIterator implements Iterator<Transaction>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final long SIX_MINUTES = 6 * 60 * 1000;
+	private static final long SIX_MINUTES = 2 * 60 * 1000;
 
 	private static final Timestamp INITIAL_TIMESTAMP = Timestamp.valueOf("2019-01-01 00:00:00");
 

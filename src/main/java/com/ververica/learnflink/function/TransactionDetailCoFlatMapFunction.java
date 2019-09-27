@@ -30,6 +30,7 @@ public class TransactionDetailCoFlatMapFunction extends RichCoFlatMapFunction<Tr
             out.collect(new FullTransaction(value, details.getCategory()));
 
             detailsState.clear();
+            // TODO: needed?
             if (transactionState.value() != null ) transactionState.clear();
 
         } else {
@@ -45,6 +46,7 @@ public class TransactionDetailCoFlatMapFunction extends RichCoFlatMapFunction<Tr
             out.collect(new FullTransaction(transaction, value.getCategory()));
 
             transactionState.clear();
+            // TODO: needed?
             if (detailsState.value() != null) detailsState.clear();
         } else {
             detailsState.update(value);

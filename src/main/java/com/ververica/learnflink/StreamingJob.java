@@ -22,6 +22,7 @@ import com.ververica.learnflink.entity.EnrichedTransaction;
 import com.ververica.learnflink.entity.FraudAlert;
 import com.ververica.learnflink.entity.Transaction;
 import com.ververica.learnflink.entity.TransactionDetails;
+import com.ververica.learnflink.eventtime.TransactionTimeAssigner;
 import com.ververica.learnflink.function.*;
 import com.ververica.learnflink.sink.EnrichedTransactionSink;
 import com.ververica.learnflink.sink.FraudAlertSink;
@@ -31,9 +32,12 @@ import com.ververica.learnflink.source.TransactionDetailsSource;
 import com.ververica.learnflink.source.TransactionSource;
 import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.configuration.GlobalConfiguration;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.time.Time;
 
 /**
  * Skeleton for a Flink Streaming Job.
@@ -66,15 +70,17 @@ public class StreamingJob {
 		);
 
 		// To avoid using all CPU cores on the laptop
-		env.setParallelism(2);
+		env.setParallelism(1);
+		// To use event time instead of processing time
+		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-		filterStream(env);
+		//filterStream(env);
 		//enrichStream(env);
 		//enrichStreamWithFlatMap(env);
 		//statefulStreamStats(env);
 		//fraudDetection(env);
 		//connectStream(env);
-
+		hourlyMaxTransaction(env);
 	}
 
 	private static void filterStream(StreamExecutionEnvironment env) throws Exception {
@@ -188,6 +194,7 @@ public class StreamingJob {
 
 		KeyedStream<Transaction, Long> keyedTransactions = transactions
 				.filter(new AccountFilterFunction())
+				.name("filter out test account")
 				.keyBy(Transaction::getTransactionId);
 
 
@@ -206,5 +213,66 @@ public class StreamingJob {
 
 		env.execute("Flink Job: connect stream");
 	}
+
+	private static void hourlyMaxTransaction(StreamExecutionEnvironment env) throws Exception {
+
+		DataStream<Transaction> transactions = env
+				.addSource(new TransactionSource())
+				.name("transactions")
+				.filter(new AccountFilterFunction());
+
+		transactions
+				.assignTimestampsAndWatermarks(new TransactionTimeAssigner())
+				.name("add timestamp and watermark")
+				.keyBy(Transaction::getAccountId)
+				.window(TumblingEventTimeWindows.of(Time.hours(1)))
+				.process(new HourlyMaxTransactionProcessFunction())
+				.name("hourly max transaction")
+				.print();
+
+		env.execute("Flink Job: hourly max transaction");
+
+	}
+
+	private static void hourlyReduce(StreamExecutionEnvironment env) throws Exception {
+
+		DataStream<Transaction> transactions = env
+				.addSource(new TransactionSource())
+				.name("transactions")
+				.filter(new AccountFilterFunction());
+
+		transactions
+				.assignTimestampsAndWatermarks(new TransactionTimeAssigner())
+				.name("add timestamp and watermark")
+				.keyBy(Transaction::getAccountId)
+				.window(TumblingEventTimeWindows.of(Time.hours(1)))
+				.reduce(new HourlyReduceFunction(), new HourlyProcessWindowFunction())
+				.name("hourly max transaction with reduce")
+				.print();
+
+		env.execute("Flink Job: hourly reduce");
+
+	}
+
+	private static void hourlyAggregation(StreamExecutionEnvironment env) throws Exception {
+
+		DataStream<Transaction> transactions = env
+				.addSource(new TransactionSource())
+				.name("transactions")
+				.filter(new AccountFilterFunction());
+
+		transactions
+				.assignTimestampsAndWatermarks(new TransactionTimeAssigner())
+				.name("add timestamp and watermark")
+				.keyBy(Transaction::getAccountId)
+				.window(TumblingEventTimeWindows.of(Time.hours(1)))
+				.aggregate(new HourlyAggregateFunction(), new HourlyAggregateProcessWindowFunction())
+				.name("hourly max transaction with aggregation")
+				.print();
+
+		env.execute("Flink Job: hourly aggregation");
+
+	}
+
 }
 
