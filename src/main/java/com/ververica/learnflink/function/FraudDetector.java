@@ -19,6 +19,14 @@ public class FraudDetector extends KeyedProcessFunction<Long, Transaction, Fraud
 
     private static final long ONE_MINUTE = 60 * 1000;
 
+    ValueState<Boolean> getFoundState() {
+        return foundState;
+    }
+
+    ValueState<Long> getTimerState() {
+        return timerState;
+    }
+
     private transient ValueState<Boolean> foundState;
 
     private transient ValueState<Long> timerState;
