@@ -1,0 +1,50 @@
+trigger:
+- master
+
+
+variables:
+
+  # Azure Resource Manager connection created during pipeline creation
+  azureSubscription: 'cae00c10-93d7-4cb0-b141-9d475c70051c'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  # DEBUG
+  system.debug: true
+
+
+stages:
+
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: MavenPackage
+    displayName: Maven Package
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: Maven@3
+      displayName: 'Maven Package'
+      inputs:
+        mavenPomFile: 'pom.xml'
+
+    - task: CopyFiles@2
+      inputs:
+        contents: 'target/learnflink-*.jar'
+        targetFolder: $(Build.ArtifactStagingDirectory)
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: JobJar    
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
+  
+
+
+- stage: Run
