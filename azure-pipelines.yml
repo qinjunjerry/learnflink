@@ -48,6 +48,8 @@ stages:
   jobs:
     - job: DownloadDeploy
       displayName: 'Download & Deploy'
+      pool:
+        vmImage: $(vmImageName)
       steps:
       - task: DownloadPipelineArtifact@2
         displayName: 'Download Pipeline Artifacts'
