@@ -38,7 +38,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: 'artifacts'
+        targetPath: '$(build.artifactstagingdirectory)'
         artifactName: JobJar
 
 
@@ -56,11 +56,11 @@ stages:
         displayName: 'Download Pipeline Artifacts'
         inputs:
           artifact: 'JobJar'
-          downloadPath: 'artifacts' 
+          downloadPath: '$(build.artifactstagingdirectory)' 
 
       - task: AzureFileCopy@3
         inputs:
-          sourcePath: 'artifacts' 
+          sourcePath: '$(build.artifactstagingdirectory)' 
           azureSubscription: '$(azureSubscription)'
           destination: azureBlob
           storage: jqinblobstorage
