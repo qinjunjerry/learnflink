@@ -32,12 +32,13 @@ stages:
 
     - task: CopyFiles@2
       inputs:
-        Contents: 'target/learnflink-*.jar'
-        TargetFolder: '$(Pipeline.Workspace)'
+        SourceFolder: 'target'
+        Contents: 'learnflink-*.jar'
+        TargetFolder: '$(build.artifactstagingdirectory)'
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/target'
+        targetPath: 'artifacts'
         artifactName: JobJar
 
 
@@ -55,11 +56,11 @@ stages:
         displayName: 'Download Pipeline Artifacts'
         inputs:
           artifact: 'JobJar'
-          downloadPath: '$(Pipeline.Workspace)' 
+          downloadPath: 'artifacts' 
 
       - task: AzureFileCopy@3
         inputs:
-          sourcePath: '$(Pipeline.Workspace)' 
+          sourcePath: 'artifacts' 
           azureSubscription: '$(azureSubscription)'
           destination: azureBlob
           storage: jqinblobstorage
