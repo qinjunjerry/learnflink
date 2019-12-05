@@ -44,7 +44,16 @@ stages:
   displayName: Deploy stage
   dependsOn: Build
   condition: succeeded()
-  
+  jobs:
+  - job: Download
+    steps:
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        artifactName: JobJar
+        downloadPath: $(Build.ArtifactStagingDirectory)
 
 
 - stage: Run
+  displayName: Run stage
+
