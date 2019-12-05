@@ -38,26 +38,28 @@ stages:
     - task: PublishBuildArtifacts@1
       inputs:
         pathtoPublish: $(Build.ArtifactStagingDirectory)
-        artifactName: JobJar    
+        artifactName: JobJar
+        publishLocation: FilePath
+        TargetPath: 'wasbs://vvp@jqinblobstorage.blob.core.windows.net'
 
-- stage: Deploy
-  displayName: Deploy stage
-  dependsOn: Build
-  condition: succeeded()
-  jobs:
-    - job: Run
-      steps:
-      - task: DownloadBuildArtifacts@0
-        displayName: 'Download Build Artifacts'
-        inputs:
-          artifactName: JobJar
-          downloadPath: $(Build.ArtifactStagingDirectory)
+# - stage: Deploy
+#   displayName: Deploy stage
+#   dependsOn: Build
+#   condition: succeeded()
+#   jobs:
+#     - job: Run
+#       steps:
+#       - task: DownloadBuildArtifacts@0
+#         displayName: 'Download Build Artifacts'
+#         inputs:
+#           artifactName: JobJar
+#           downloadPath: $(Build.ArtifactStagingDirectory)
 
 
-- stage: Run
-  displayName: Run stage
-  jobs:
-    - job: Run
-      steps:
-        - script: echo Hello World
+# - stage: Run
+#   displayName: Run stage
+#   jobs:
+#     - job: Run
+#       steps:
+#         - script: echo Hello World
 
