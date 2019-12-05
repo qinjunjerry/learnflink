@@ -55,6 +55,13 @@ stages:
           artifact: 'JobJar'
           downloadPath: '$(Pipeline.Workspace)' 
 
+      - task: AzureFileCopy@3
+        inputs:
+          sourcePath: '$(Pipeline.Workspace)' 
+          azureSubscription: '$(azureSubscription)'
+          destination: azureBlob
+          storage: jqinblobstorage
+          containerName: vvp
 
 - stage: Run
   displayName: Run stage
