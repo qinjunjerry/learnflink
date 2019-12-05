@@ -8,7 +8,7 @@ variables:
   azureSubscription: 'cae00c10-93d7-4cb0-b141-9d475c70051c'
 
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  vmImageName: 'windows-latest'
 
   # DEBUG
   system.debug: true
