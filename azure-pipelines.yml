@@ -39,15 +39,14 @@ stages:
       inputs:
         pathtoPublish: $(Build.ArtifactStagingDirectory)
         artifactName: JobJar
-        publishLocation: FilePath
-        TargetPath: 
+
 
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
   condition: succeeded()
   jobs:
-    - job: Run
+    - job: DownloadDeploy
       steps:
       - task: DownloadBuildArtifacts@0
         displayName: 'Download Build Artifacts'
@@ -61,10 +60,10 @@ stages:
           publishLocation: 'filepath'
           fileSharePath: '''wasbs://vvp@jqinblobstorage.blob.core.windows.net'''
 
-# - stage: Run
-#   displayName: Run stage
-#   jobs:
-#     - job: Run
-#       steps:
-#         - script: echo Hello World
+- stage: Run
+  displayName: Run stage
+  jobs:
+    - job: Run
+      steps:
+        - script: echo Hello World
 
