@@ -37,7 +37,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)'
+        targetPath: '$(Pipeline.Workspace)/target/learnflink-*.jar'
         artifactName: JobJar
 
 
