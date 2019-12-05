@@ -36,9 +36,9 @@ stages:
         targetFolder: $(Build.ArtifactStagingDirectory)
 
     - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: $(Build.ArtifactStagingDirectory)
-      artifactName: JobJar    
+      inputs:
+        pathtoPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: JobJar    
 
 - stage: Deploy
   displayName: Deploy stage
