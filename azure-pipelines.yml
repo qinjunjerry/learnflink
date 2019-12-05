@@ -32,12 +32,12 @@ stages:
 
     - task: CopyFiles@2
       inputs:
-        contents: 'target/learnflink-*.jar'
-        targetFolder: '$(Pipeline.Workspace)' 
+        Contents: 'target/learnflink-*.jar'
+        TargetFolder: '$(Pipeline.Workspace)'
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/target/learnflink-*.jar'
+        targetPath: '$(Pipeline.Workspace)'
         artifactName: JobJar
 
 
