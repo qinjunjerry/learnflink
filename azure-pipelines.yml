@@ -33,11 +33,11 @@ stages:
     - task: CopyFiles@2
       inputs:
         contents: 'target/learnflink-*.jar'
-        targetFolder: $(Build.ArtifactStagingDirectory)
+        targetFolder: '$(Pipeline.Workspace)' 
 
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        pathtoPublish: $(Build.ArtifactStagingDirectory)
+        targetPath: '$(Pipeline.Workspace)' 
         artifactName: JobJar
 
 
@@ -47,18 +47,14 @@ stages:
   condition: succeeded()
   jobs:
     - job: DownloadDeploy
+      displayName: 'Download & Deploy'
       steps:
-      - task: DownloadBuildArtifacts@0
-        displayName: 'Download Build Artifacts'
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download Pipeline Artifacts'
         inputs:
-          artifactName: JobJar
-          downloadPath: $(Build.ArtifactStagingDirectory)
-      - task: PublishPipelineArtifact@1
-        inputs:
-          targetPath: '$(Build.ArtifactStagingDirectory)'
           artifact: 'JobJar'
-          publishLocation: 'filepath'
-          fileSharePath: '''wasbs://vvp@jqinblobstorage.blob.core.windows.net'''
+          downloadPath: '$(Pipeline.Workspace)' 
+
 
 - stage: Run
   displayName: Run stage
