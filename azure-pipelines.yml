@@ -76,8 +76,8 @@ stages:
 
         - task: InvokeRESTAPI@1
           inputs:
-            connectionType: 'connectedServiceName'
-            serviceConnection: 'http://51.124.139.165:8080/api/v1/namespaces/default/deployments/4ebe37b7-79af-40a2-a0d5-05976f062e52'
+            connectionType: 'connectedServiceNameARM'
+            azureServiceConnection: 'jqinServiceConnection'
             method: 'PATCH'
             headers: |
               {
@@ -88,4 +88,5 @@ stages:
               apiVersion: v1
               spec:
                 state: CANCELLED
+            waitForCompletion: 'false'
 
