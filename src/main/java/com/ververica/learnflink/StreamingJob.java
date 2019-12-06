@@ -33,7 +33,6 @@ import com.ververica.learnflink.source.TransactionDetailsSource;
 import com.ververica.learnflink.source.TransactionSource;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple6;
-import org.apache.flink.configuration.GlobalConfiguration;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
@@ -61,7 +60,7 @@ public class StreamingJob {
 
 	public static void main(String[] args) throws Exception {
 		// set up the streaming execution environment
-		//final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
 
 //		// To load a specific flink-conf.yaml, provide the directory holding the conf file.
@@ -70,13 +69,13 @@ public class StreamingJob {
 //				GlobalConfiguration.loadConfiguration(".")
 //		);
 
-		// To enable the flink web UI
-		final StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(
-				GlobalConfiguration.loadConfiguration(".")
-		);
+//		// To enable the flink web UI
+//		final StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(
+//				GlobalConfiguration.loadConfiguration(".")
+//		);
 
 		// To avoid using all CPU cores on the laptop
-		env.setParallelism(1);
+		env.setParallelism(2);
 		// To use event time instead of processing time
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
