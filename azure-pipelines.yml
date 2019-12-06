@@ -31,9 +31,16 @@ stages:
         mavenPomFile: 'pom.xml'
 
     - task: CopyFiles@2
+      displayName: Copy job jar
       inputs:
         SourceFolder: 'target'
         Contents: 'learnflink-*.jar'
+        TargetFolder: '$(build.artifactstagingdirectory)'
+
+    - task: CopyFiles@2
+      displayName: Copy flink-conf.yaml
+      inputs:
+        Contents: 'flink-conf.yaml'
         TargetFolder: '$(build.artifactstagingdirectory)'
 
     - task: PublishPipelineArtifact@1
@@ -41,14 +48,13 @@ stages:
         targetPath: '$(build.artifactstagingdirectory)'
         artifactName: JobJar
 
-
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
   condition: succeeded()
   jobs:
     - job: DownloadDeploy
-      displayName: 'Download & Deploy'
+      displayName: Download and Deploy
       pool:
         vmImage: $(vmImageName)
       steps:
