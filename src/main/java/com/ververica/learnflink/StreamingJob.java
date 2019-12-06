@@ -75,7 +75,7 @@ public class StreamingJob {
 //		);
 
 		// To avoid using all CPU cores on the laptop
-		env.setParallelism(2);
+		env.setParallelism(1);
 		// To use event time instead of processing time
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
