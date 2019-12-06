@@ -37,12 +37,6 @@ stages:
         Contents: 'learnflink-*.jar'
         TargetFolder: '$(build.artifactstagingdirectory)'
 
-    - task: CopyFiles@2
-      displayName: Copy flink-conf.yaml
-      inputs:
-        Contents: 'flink-conf.yaml'
-        TargetFolder: '$(build.artifactstagingdirectory)'
-
     - task: PublishPipelineArtifact@1
       inputs:
         targetPath: '$(build.artifactstagingdirectory)'
