@@ -70,7 +70,7 @@ stages:
 - stage: Run
   displayName: Run stage
   jobs:
-    - job: Run
+    - job: SetupEnv
       steps:
         - script: echo Hello World
 
