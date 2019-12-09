@@ -87,7 +87,8 @@ stages:
         - script: az aks get-credentials --resource-group fe-testing --name juncluster
         - script: kubectl get pods --namespace kube-system
         - script: kubectl port-forward service/vvp-ververica-platform 8080:80 --namespace kube-system &
-        - script: curl -X PATCH "http://localhost:8080/api/v1/namespaces/default/deployments/4ebe37b7-79af-40a2-a0d5-05976f062e52" -H "accept: application/yaml" -H "Content-Type: application/yaml" -d '---
+        - script: |
+        curl -X PATCH "http://localhost:8080/api/v1/namespaces/default/deployments/4ebe37b7-79af-40a2-a0d5-05976f062e52" -H "accept: application/yaml" -H "Content-Type: application/yaml" -d '---
 kind: Deployment
 apiVersion: v1
 spec:
