@@ -86,7 +86,7 @@ stages:
         - script: az login --service-principal -u http://azure-cli-2019-12-06-17-03-56 -p $(pipeline-servive-principal-password)  --tenant 2925ee25-3bd0-402a-88f1-69307e6a39f3
         - script: az aks get-credentials --resource-group fe-testing --name juncluster
         - script: kubectl get pods --namespace kube-system
-        - script: kubectl port-forward service/vvp-ververica-platform 8080:80 --namespace kube-system
+        - script: kubectl port-forward service/vvp-ververica-platform 8080:80 --namespace kube-system &
 
     - job: Run
       dependsOn: SetupEnv
