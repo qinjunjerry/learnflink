@@ -71,8 +71,7 @@ stages:
   displayName: Run stage
   jobs:
     - job: Run
-      pool:
-        vmImage: $(vmImageName)
+      pool: server
       steps:
         - script: echo Hello World
 
