@@ -16,56 +16,56 @@ variables:
 
 stages:
 
-# - stage: Build
-#   displayName: Build stage
-#   jobs:
-#   - job: MavenPackage
-#     displayName: Maven Package
-#     pool:
-#       vmImage: $(vmImageName)
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: MavenPackage
+    displayName: Maven Package
+    pool:
+      vmImage: $(vmImageName)
 
-#     steps:
-#     - task: Maven@3
-#       displayName: 'Maven Package'
-#       inputs:
-#         mavenPomFile: 'pom.xml'
+    steps:
+    - task: Maven@3
+      displayName: 'Maven Package'
+      inputs:
+        mavenPomFile: 'pom.xml'
 
-#     - task: CopyFiles@2
-#       displayName: Copy job jar
-#       inputs:
-#         SourceFolder: 'target'
-#         Contents: 'learnflink-*.jar'
-#         TargetFolder: '$(build.artifactstagingdirectory)'
+    - task: CopyFiles@2
+      displayName: Copy job jar
+      inputs:
+        SourceFolder: 'target'
+        Contents: 'learnflink-*.jar'
+        TargetFolder: '$(build.artifactstagingdirectory)'
 
-#     - task: PublishPipelineArtifact@1
-#       inputs:
-#         targetPath: '$(build.artifactstagingdirectory)'
-#         artifactName: JobJar
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(build.artifactstagingdirectory)'
+        artifactName: JobJar
 
-# - stage: Deploy
-#   displayName: Deploy stage
-#   dependsOn: Build
-#   condition: succeeded()
-#   jobs:
-#     - job: DownloadDeploy
-#       displayName: Download and Deploy
-#       pool:
-#         vmImage: $(vmImageName)
-#       steps:
-#       - task: DownloadPipelineArtifact@2
-#         displayName: 'Download Pipeline Artifacts'
-#         inputs:
-#           artifact: 'JobJar'
-#           downloadPath: '$(build.artifactstagingdirectory)' 
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+    - job: DownloadDeploy
+      displayName: Download and Deploy
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download Pipeline Artifacts'
+        inputs:
+          artifact: 'JobJar'
+          downloadPath: '$(build.artifactstagingdirectory)' 
 
-#       - task: AzureFileCopy@3
-#         inputs:
-#           sourcePath: '$(build.artifactstagingdirectory)' 
-#           azureSubscription: '$(azureSubscription)'
-#           destination: azureBlob
-#           storage: jqinblobstorage
-#           containerName: vvp
-#           BlobPrefix: 'artifacts/namespaces/default'
+      - task: AzureFileCopy@3
+        inputs:
+          sourcePath: '$(build.artifactstagingdirectory)' 
+          azureSubscription: '$(azureSubscription)'
+          destination: azureBlob
+          storage: jqinblobstorage
+          containerName: vvp
+          BlobPrefix: 'artifacts/namespaces/default'
 
 - stage: Run
   displayName: Run stage
@@ -89,33 +89,34 @@ stages:
         - script: kubectl port-forward service/vvp-ververica-platform 8080:80 --namespace kube-system &
         - script: echo hello world
         - script: |
-            curl -X PATCH "http://localhost:8080/api/v1/namespaces/default/deployments/4ebe37b7-79af-40a2-a0d5-05976f062e52" -H "accept: application/yaml" -H "Content-Type: application/yaml" -d '---
+            curl -X PATCH "http://localhost:8080/api/v1/namespaces/default/deployments/4ebe37b7-79af-40a2-a0d5-05976f062e52" -H "accept: application/yaml" -H "Content-Type: application/yaml" -d '
+            ---
             kind: Deployment
             apiVersion: v1
             spec:
               state: CANCELLED
             '
       
-    - job: Run
-      dependsOn: SetupEnv
-      condition: succeeded()
-      # this is needed: because InvokeRESTAPI@1 is a server job task (agentless job in the classic editor), not a regular task that can run on an agent.
-      pool: server
-      steps:
-        - task: InvokeRESTAPI@1
-          inputs:
-            connectionType: 'connectedServiceName'
-            serviceConnection: 'vvpconnection'
-            method: 'PATCH'
-            headers: |
-              {
-              "Content-Type": "application/yaml",
-              "accept": "application/yaml"
-              }
-            body: |
-              kind: Deployment
-              apiVersion: v1
-              spec:
-                state: RUNNING
-            waitForCompletion: 'false'
+    # - job: Run
+    #   dependsOn: SetupEnv
+    #   condition: succeeded()
+    #   # this is needed: because InvokeRESTAPI@1 is a server job task (agentless job in the classic editor), not a regular task that can run on an agent.
+    #   pool: server
+    #   steps:
+    #     - task: InvokeRESTAPI@1
+    #       inputs:
+    #         connectionType: 'connectedServiceName'
+    #         serviceConnection: 'vvpconnection'
+    #         method: 'PATCH'
+    #         headers: |
+    #           {
+    #           "Content-Type": "application/yaml",
+    #           "accept": "application/yaml"
+    #           }
+    #         body: |
+    #           kind: Deployment
+    #           apiVersion: v1
+    #           spec:
+    #             state: RUNNING
+    #         waitForCompletion: 'false'
 
