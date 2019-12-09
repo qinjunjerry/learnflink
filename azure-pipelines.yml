@@ -89,18 +89,19 @@ stages:
         - script: az aks get-credentials --resource-group fe-testing --name juncluster
         - script: kubectl get pods --namespace kube-system
     
-        # - task: InvokeRESTAPI@1
-        #   inputs:
-        #     connectionType: 'connectedServiceName'
-        #     method: 'PATCH'
-        #     headers: |
-        #       {
-        #       "Content-Type":"application/yaml", 
-        #       }
-        #     body: |
-        #       kind: Deployment
-        #       apiVersion: v1
-        #       spec:
-        #         state: CANCELLED
-        #     waitForCompletion: 'false'
+        - task: InvokeRESTAPI@1
+          inputs:
+            connectionType: 'connectedServiceName'
+            serviceConnection: 'vvpconnection'
+            method: 'PATCH'
+            headers: |
+              {
+              "Content-Type":"application/yaml", 
+              }
+            body: |
+              kind: Deployment
+              apiVersion: v1
+              spec:
+                state: RUNNING
+            waitForCompletion: 'false'
 
