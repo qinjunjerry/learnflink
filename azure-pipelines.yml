@@ -96,7 +96,8 @@ stages:
             method: 'PATCH'
             headers: |
               {
-              "Content-Type":"application/yaml", 
+              "Content-Type": "application/yaml",
+              "accept": "application/yaml"
               }
             body: |
               kind: Deployment
