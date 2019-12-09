@@ -90,11 +90,11 @@ stages:
         - script: echo hello world
         - script: |
             curl -X PATCH "http://localhost:8080/api/v1/namespaces/default/deployments/4ebe37b7-79af-40a2-a0d5-05976f062e52" -H "accept: application/yaml" -H "Content-Type: application/yaml" -d '---
-kind: Deployment
-apiVersion: v1
-spec:
-  state: CANCELLED
-'
+            kind: Deployment
+            apiVersion: v1
+            spec:
+              state: CANCELLED
+            '
       
     - job: Run
       dependsOn: SetupEnv
