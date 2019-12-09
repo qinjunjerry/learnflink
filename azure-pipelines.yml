@@ -71,7 +71,6 @@ stages:
   displayName: Run stage
   jobs:
     - job: Run
-      pool: server
       steps:
         - script: echo Hello World
 
@@ -89,7 +88,11 @@ stages:
         - script: az login --service-principal -u http://azure-cli-2019-12-06-17-03-56 -p $(pipeline-servive-principal-password)  --tenant 2925ee25-3bd0-402a-88f1-69307e6a39f3
         - script: az aks get-credentials --resource-group fe-testing --name juncluster
         - script: kubectl get pods --namespace kube-system
-    
+
+    - job: Run
+      # this is needed: because InvokeRESTAPI@1 is a server job task (agentless job in the classic editor), not a regular task that can run on an agent.
+      pool: server
+      steps:
         - task: InvokeRESTAPI@1
           inputs:
             connectionType: 'connectedServiceName'
