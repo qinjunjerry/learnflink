@@ -5,7 +5,7 @@ trigger:
 variables:
 
   # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'ba267a46-75d3-4652-8427-75e0c701b99b'
+  azureSubscription: 'cae00c10-93d7-4cb0-b141-9d475c70051c'
 
   # Agent VM image name
   vmImageName: 'windows-latest'
