@@ -21,7 +21,7 @@ variables:
   vvpResourceGroup: 'vvp-pipeline-demo'
   vvpClusterName: 'vvp-pipeline-cluster'
   vvpKubernetesNamespace: 'vvp'
-  vvpJobJar: 'learnflink-*.jar'
+  vvpJobJar: 'learnflink-0.2.jar'
   vvpPipelineDemoStorage: 'vvppipelinestorage'
   vvpPipelineDemoBlobContainer: 'vvp-pipeline-artifacts'
 
