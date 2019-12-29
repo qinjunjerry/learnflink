@@ -13,8 +13,8 @@ public class WordCountCustomBootstrapper extends KeyedStateBootstrapFunction<Str
 
     @Override
     public void open(Configuration parameters) {
-        // The WordCountCustom example is implemented with a custom KeyedProcessFunction which saves the state
-        // (type: Integer) identified by the name "custom". This is why the ValueStateDescriptor is created this way.
+        // If WordCountStreamJob used WordCountCustomProcessFunction instead of sum(1), it saves the state
+        // (type: Integer) identified by the name "custom", then the ValueStateDescriptor can be created this way.
         ValueStateDescriptor<Integer> descriptor = new ValueStateDescriptor<>(
                 "custom",
                 TypeInformation.of(new TypeHint<Integer>(){})
