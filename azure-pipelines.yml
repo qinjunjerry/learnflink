@@ -80,7 +80,7 @@ stages:
           sourcePath: '$(build.artifactstagingdirectory)' 
           azureSubscription: '$(azureSubscription)'
           destination: azureBlob
-          storage: '$(vvpPipelineDemoStorage)'
+          storage: $(vvpPipelineDemoStorage)
           containerName: '$(vvpPipelineDemoBlobContainer)'
           BlobPrefix: 'artifacts/namespaces/$(vvpNamespace)'
 
