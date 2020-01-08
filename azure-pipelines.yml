@@ -23,7 +23,7 @@ variables:
   vvpKubernetesNamespace: 'vvp'
   vvpJobJar: 'learnflink-0.2.jar'
   vvpPipelineDemoStorage: 'vvppipelinestorage'
-  vvpPipelineDemoBlobContainer: 'vvp-pipeline-artifacts'
+  vvpPipelineDemoBlobContainer: 'vvp-pipeline-container'
 
 
 stages:
@@ -80,8 +80,8 @@ stages:
           sourcePath: '$(build.artifactstagingdirectory)' 
           azureSubscription: '$(azureSubscription)'
           destination: azureBlob
-          storage: vvppipelinestorage
-          containerName: vvp-pipeline-artifacts
+          storage: '$(vvpPipelineDemoStorage)'
+          containerName: '$(vvpPipelineDemoBlobContainer)'
           BlobPrefix: 'artifacts/namespaces/$(vvpNamespace)'
 
 - stage: Submit
