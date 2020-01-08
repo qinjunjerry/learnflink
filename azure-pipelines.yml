@@ -99,15 +99,19 @@ stages:
           inputs:
             azureSubscription: '$(azureSubscription)'
             KeyVaultName: '$(keyVault)'
-            SecretsFilter: 'vvp-pipeline-demo-service-principal-password'
+            SecretsFilter: 'vvp-pipeline-demo-service-principal-password,vvp-pipeline-demo-api-token'
 
         - script: az login --service-principal -u $(servicePrincipal) -p $(vvp-pipeline-demo-service-principal-password)  --tenant $(tenantId)
         - script: az aks get-credentials --resource-group $(vvpResourceGroup) --name $(vvpClusterName)
         - script: kubectl port-forward service/vvp-ververica-platform 8080:80 --namespace $(vvpKubernetesNamespace) &
         - script: |
-            curl -X GET "http://localhost:8080/api/v1/namespaces/default/deployment-targets" -H "accept: application/json"
+            curl -X GET "http://localhost:8080/api/v1/namespaces/default/deployment-targets" 
+            -H "Authorization: Bearer $(vvp-pipeline-demo-api-token)" 
+            -H "accept: application/json"
         - script: |
-            curl -X POST "http://localhost:8080/api/v1/namespaces/default/deployments" -H "accept: application/yaml" -H "Content-Type: application/yaml" -d "
+            curl -X POST "http://localhost:8080/api/v1/namespaces/default/deployments" 
+            -H "Authorization: Bearer $(vvp-pipeline-demo-api-token)"
+            -H "accept: application/yaml" -H "Content-Type: application/yaml" -d "
             kind: Deployment
             apiVersion: v1
             metadata:
