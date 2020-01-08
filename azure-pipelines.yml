@@ -79,10 +79,11 @@ stages:
         inputs:
           sourcePath: '$(build.artifactstagingdirectory)' 
           azureSubscription: '$(azureSubscription)'
-          destination: azureBlob
-          storage: vvppipelinestorage
-          containerName: '$(vvpPipelineDemoBlobContainer)'
+          Destination: 'AzureBlob'
+          storage: 'vvppipelinestorage'
+          ContainerName: 'vvp-pipeline-container'
           BlobPrefix: 'artifacts/namespaces/$(vvpNamespace)'
+          
 
 - stage: Submit
   displayName: Submit stage
