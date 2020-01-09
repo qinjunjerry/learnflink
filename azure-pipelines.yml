@@ -78,7 +78,7 @@ stages:
         displayName: Deploy to blob storage
         inputs:
           sourcePath: '$(build.artifactstagingdirectory)' 
-          azureSubscription: '$(azureSubscription)'
+          azureSubscription: 'vvp-pipeline-service-connection'
           Destination: 'AzureBlob'
           storage: 'vvppipelinestorage'
           ContainerName: 'vvp-pipeline-container'
