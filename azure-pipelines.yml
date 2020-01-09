@@ -77,8 +77,8 @@ stages:
       - task: AzureFileCopy@3
         displayName: Deploy to blob storage
         inputs:
-          sourcePath: '$(build.artifactstagingdirectory)' 
-          azureSubscription: 'ba267a46-75d3-4652-8427-75e0c701b99b'
+          SourcePath: '$(build.artifactstagingdirectory)'
+          azureSubscription: 'vvp-pipeline-service-connection'
           Destination: 'AzureBlob'
           storage: 'vvppipelinestorage'
           ContainerName: 'vvp-pipeline-container'
