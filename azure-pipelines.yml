@@ -14,7 +14,7 @@ variables:
 
   # Ververica Platform related settings
   vvpNamespace: 'default'
-  vvpDeploymentTarget: '8cabebb6-7f6d-4e48-a832-761d99148564'
+  vvpDeploymentTarget: '585e236d-20f6-49e0-a8fe-972943875afe'
   servicePrincipal: 'http://vvp-pipeline-demo-service-principal'
   tenantId: '2925ee25-3bd0-402a-88f1-69307e6a39f3'
   keyVault: 'vvp-pipeline-keyvault'
@@ -78,10 +78,10 @@ stages:
         displayName: Deploy to blob storage
         inputs:
           SourcePath: '$(build.artifactstagingdirectory)'
-          azureSubscription: 'vvp-pipeline-service-connection'
+          azureSubscription: '$(azureSubscription)'
           Destination: 'AzureBlob'
-          storage: 'vvppipelinestorage'
-          ContainerName: 'vvp-pipeline-container'
+          storage: '$(vvpPipelineDemoStorage)'
+          ContainerName: '$(vvpPipelineDemoBlobContainer)'
           BlobPrefix: 'artifacts/namespaces/$(vvpNamespace)'
           
 
