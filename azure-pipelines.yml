@@ -110,7 +110,7 @@ stages:
             -H "Authorization: Bearer $(vvp-pipeline-demo-api-token)" \
             -H "accept: application/json"
         - script: |
-            curl -X POST "http://localhost:8080/api/v1/namespaces/default/deployments" 
+            curl -X POST "http://localhost:8080/api/v1/namespaces/default/deployments" \
             -H "Authorization: Bearer $(vvp-pipeline-demo-api-token)" \
             -H "accept: application/yaml" -H "Content-Type: application/yaml" -d "
             kind: Deployment
