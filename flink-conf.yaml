@@ -8,7 +8,7 @@
 #      $ sudo lsof -i :8081
 #      COMMAND  PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
 #      macmnsvc  58  mfe   20u  IPv6 0xd4f720d700d1edcd      0t0  TCP *:sunproxyadmin (LISTEN)
-rest.port: 8091
+rest.port: 18081
 
 
 #metrics.reporter.jmx.factory.class: org.apache.flink.metrics.jmx.JMXReporterFactory
