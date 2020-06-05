@@ -9,5 +9,13 @@
         <module name="learnflink" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="flink-state-processor-api_2.11" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="flink-state-processor-api_2.11" options="-Xpkginfo:always --add-exports=java.base/sun.net.util=ALL-UNNAMED --add-exports=java.management/sun.management=ALL-UNNAMED" />
+    </option>
   </component>
 </project>
