@@ -22,7 +22,7 @@ under the License.
 
 	<groupId>com.ververica</groupId>
 	<artifactId>learnflink</artifactId>
-	<version>0.2</version>
+	<version>${flink.version}-0.1</version>
 	<packaging>jar</packaging>
 
 	<name>Learn Flink</name>
@@ -30,7 +30,7 @@ under the License.
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<flink.version>1.9.1</flink.version>
+		<flink.version>1.10.1</flink.version>
 		<java.version>1.8</java.version>
 		<scala.binary.version>2.12</scala.binary.version>
 
@@ -141,6 +141,22 @@ under the License.
 			<!--scope>provided</scope-->
 		</dependency>
 
+		<!-- Table API/SQL -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Run the Table API & SQL programs locally within IDE -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table-planner_${scala.binary.version}</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -200,13 +216,6 @@ under the License.
 			<version>RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>RELEASE</version>
-			<scope>compile</scope>
-		</dependency>
-
 
 	</dependencies>
 
