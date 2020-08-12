@@ -3,14 +3,11 @@ package com.ververica.learnflink;
 import com.ververica.learnflink.function.WordCountBootstrapper;
 import com.ververica.learnflink.function.WordCountStateReadFunction;
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.typeinfo.TypeHint;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.runtime.state.memory.MemoryStateBackend;
+import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.state.api.BootstrapTransformation;
 import org.apache.flink.state.api.ExistingSavepoint;
 import org.apache.flink.state.api.OperatorTransformation;
@@ -28,9 +25,11 @@ public class WordLineStatStateRewriteJob {
         }
         String oldSavepointPath = "file:///" + params.get("input");
 
+        String output = params.get("output");
+
 
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-        ExistingSavepoint existingSavepoint = Savepoint.load(env, oldSavepointPath, new MemoryStateBackend());
+        ExistingSavepoint existingSavepoint = Savepoint.load(env, oldSavepointPath, new FsStateBackend("file://"+output));
 
         DataSet<Tuple3<Integer, Integer, String>> operatorState = existingSavepoint.readListState(
                 "line_stat_map",
