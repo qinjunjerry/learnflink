@@ -6,7 +6,7 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.runtime.state.memory.MemoryStateBackend;
+import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.state.api.BootstrapTransformation;
 import org.apache.flink.state.api.OperatorTransformation;
 import org.apache.flink.state.api.Savepoint;
@@ -56,7 +56,9 @@ public class WordCountBootstrapJob {
 
         // create a savepoint with BootstrapTransformations (one per operator)
         // write the created savepoint to a given path
-        Savepoint.create(new MemoryStateBackend(), 128)
+        //Savepoint.create(new MemoryStateBackend(), 128)
+
+        Savepoint.create(new FsStateBackend("file://"+output), 128)
                .withOperator("word_count_sum", transformation)
                .write(output);
 
